@@ -1,14 +1,17 @@
 # FlowLance
 
-CRM intelligent conçu pour les freelances. Centralise clients, projets
-et factures en un seul outil avec des rappels automatiques.
+CRM conçu pour les freelances. Centralise clients, projets et factures
+en un seul outil avec des rappels automatiques.
+
+[![CI/CD](https://github.com/nadanada2/freelance-crm/actions/workflows/ci.yml/badge.svg)](https://github.com/nadanada2/freelance-crm/actions/workflows/ci.yml)
 
 ## Stack technique
 
-- **Frontend** : React 18 + Vite + React Router
-- **Backend** : Django 5 + Django REST Framework
+- **Frontend** : React + Vite + React Router
+- **Backend** : Django 6 + Django REST Framework
 - **Auth** : JWT (SimpleJWT)
-- **Base de données** : SQLite (dev) / PostgreSQL (prod)
+- **Base de données** : PostgreSQL (Docker) / SQLite (installation locale sans Docker)
+- **DevOps** : Docker, Docker Compose, GitHub Actions, GitHub Container Registry
 
 ## Fonctionnalités
 
@@ -19,9 +22,40 @@ et factures en un seul outil avec des rappels automatiques.
 - Dashboard avec chiffre d'affaires en temps réel
 - Rappels intelligents : factures en retard, clients inactifs
 
-## Installation locale
+## Lancer le projet avec Docker
+
+Prérequis : Docker Desktop.
+
+```bash
+docker compose up --build
+```
+
+- Frontend : http://localhost:5173
+- Backend (API) : http://localhost:8000
+
+## Tests
+
+```bash
+docker compose exec backend python manage.py test
+```
+
+Les tests couvrent l'inscription et la connexion, la protection de l'API par authentification,
+la création d'un client rattaché à l'utilisateur connecté, et l'isolation des données entre utilisateurs.
+
+## CI/CD
+
+À chaque push sur `main`, GitHub Actions :
+
+1. lance les tests du backend ;
+2. si les tests passent, construit les images Docker (backend et frontend)
+   et les publie sur GitHub Container Registry.
+
+La configuration se trouve dans `.github/workflows/ci.yml`.
+
+## Installation locale (sans Docker)
 
 ### Backend
+
 ```bash
 cd backend
 python -m venv venv
@@ -33,6 +67,7 @@ python manage.py runserver
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
